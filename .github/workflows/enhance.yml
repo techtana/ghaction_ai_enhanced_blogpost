@@ -1,0 +1,32 @@
+# This workflow file should ideally be placed in the .github/workflows directory of your main repository.
+# For example: c:/Users/Tanat/OneDrive/_Projects/project-personal-blog/.github/workflows/enhance.yml
+
+name: Enhance Posts on Push
+
+on:
+  push:
+    branches:
+      - main # or your default branch
+    paths:
+      - 'techtana.github.io/_posts_commit/**.md'
+
+jobs:
+  enhance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Enhance posts
+        uses: ./ghaction_submodule # Assumes this action is in a directory named ghaction_submodule at the root of your repository
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add techtana.github.io/_posts_commit/*.md
+          git commit -m "docs(posts): enhance posts with AI" || echo "No changes to commit"
+          git push
