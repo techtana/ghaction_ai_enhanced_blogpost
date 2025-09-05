@@ -27,6 +27,11 @@ for filename in os.listdir(posts_dir):
         with open(filepath, "r", encoding="utf-8") as f:
             post = frontmatter.load(f)
 
+        # Check if the post has already been enhanced
+        if "{% comment %}" in post.content:
+            print(f"Skipping {filename} as it has already been enhanced.")
+            continue
+
         if "enhance_policy" in post:
             enhance_policy = post["enhance_policy"]
             content = post.content
@@ -46,7 +51,7 @@ for filename in os.listdir(posts_dir):
                 # This is hard to define without seeing an example.
                 # A more robust solution might need some regex or string manipulation.
 
-                post.content = new_content
+                post.content = new_content + "\n\n{% comment %}\n" + content + "\n{% endcomment %}"
 
                 with open(filepath, "w", encoding="utf-8") as f:
                     frontmatter.dump(post, f)

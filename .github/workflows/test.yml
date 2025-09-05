@@ -1,0 +1,57 @@
+name: Test Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create test post directory
+        run: mkdir -p _posts_commit
+
+      - name: Create test post
+        run: |
+          echo '---
+          title: Test Post
+          enhance_policy: "Summarize this text in one sentence."
+          ---
+          This is a test post that needs to be summarized.' > _posts_commit/test-post.md
+
+      - name: Run action script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python main.py
+
+      - name: Check for enhancement and preservation
+        run: |
+          original_text="This is a test post that needs to be summarized."
+          
+          # Check if the original text is wrapped in comments
+          if ! grep -Pzo "{% comment %}(\s|.)*${original_text}(\s|.)*{% endcomment %}" _posts_commit/test-post.md; then
+            echo "Original text not found within comment block."
+            exit 1
+          fi
+
+          # Check that the AI-generated content is present and not the same as the original
+          body=$(sed '1,/^---$/d' _posts_commit/test-post.md | sed '1d' | sed -n '/{% comment %}/!p')
+          if [[ -z "$body" ]] || [[ "$body" == *"$original_text"* ]]; then
+            echo "AI content not generated or is the same as original."
+            exit 1
+          fi
+
+          echo "Test passed: Content enhanced and original text preserved in comments."
