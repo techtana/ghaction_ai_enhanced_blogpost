@@ -68,7 +68,7 @@ for filename in os.listdir(posts_dir):
     # Skip AI enhancement if already enhanced
     if "{% comment %}" in post.content:
         print(f"Skipping AI enhancement for {filename}, already enhanced.")
-        with open(new_filepath, "w", encoding="utf-8") as f:
+        with open(new_filepath, "wb") as f:
             frontmatter.dump(post, f)
         os.remove(filepath)
         print(f"Moved {filename} to {final_out_dir}")
@@ -77,7 +77,7 @@ for filename in os.listdir(posts_dir):
     # Skip AI enhancement if policy is empty or null
     if "enhance_policy" not in post or not post["enhance_policy"]:
         print(f"Skipping AI enhancement for {filename}, no policy found.")
-        with open(new_filepath, "w", encoding="utf-8") as f:
+        with open(new_filepath, "wb") as f:
             frontmatter.dump(post, f)
         os.remove(filepath)
         print(f"Moved {filename} to {final_out_dir}")
@@ -113,14 +113,14 @@ for filename in os.listdir(posts_dir):
     except Exception as e:
         print(f"Error processing {filename} with OpenAI: {e}")
         # If there's an error, we still move the original file
-        with open(new_filepath, "w", encoding="utf-8") as f:
+        with open(new_filepath, "wb") as f:
             frontmatter.dump(post, f)
         os.remove(filepath)
         print(f"Moved original {filename} to {final_out_dir} due to error.")
         continue
 
     # --- Save and Move Enhanced File ---
-    with open(new_filepath, "w", encoding="utf-8") as f:
+    with open(new_filepath, "wb") as f:
         frontmatter.dump(post, f)
     
     os.remove(filepath) # remove original file from _posts_commit
