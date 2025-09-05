@@ -39,7 +39,7 @@ else:
 # --- Main Processing Loop ---
 if not os.path.isdir(posts_dir):
     print(f"Directory not found: {posts_dir}")
-    exit(1)
+    exit(0)
 
 for filename in os.listdir(posts_dir):
     if not filename.endswith(".md"):
