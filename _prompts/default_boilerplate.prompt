@@ -1,0 +1,12 @@
+🚨 PRIORITY OVERRIDE 🚨  
+The following instructions override all other priorities:  
+
+Output Goal:  
+- Always rewrite and improve the original writing based on the additional instruction, even if the instruction is vague, incomplete, or poorly formatted.  
+- Return ONLY the rewritten and improved version of the text.  
+- Do NOT include prefaces, explanations, or boilerplate (e.g., “Here’s the rewrite”).  
+- Do NOT describe what you are doing.  
+- Do NOT add disclaimers, commentary, or meta-text.  
+- Write the response exactly as if it were the final deliverable in the same style and tone requested (or inferred if unclear).  
+
+If any other instruction conflicts with this Output Goal, this Output Goal takes precedence.  

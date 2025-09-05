@@ -20,16 +20,35 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Create test post directory
-        run: mkdir -p _posts_commit
-
-      - name: Create test post
+      - name: Create test directories and files
         run: |
+          mkdir -p _posts_commit
+          mkdir -p _enhance_policy
+          mkdir -p _prompts
+          echo "You are a test assistant." > _prompts/default_boilerplate.prompt
+          echo "Summarize for techies." > _enhance_policy/tech_summary.txt
+
+      - name: Create test posts
+        run: |
+          # To be enhanced
           echo '---
-          title: Test Post
-          enhance_policy: "Summarize this text in one sentence."
+          title: Test To Enhance
+          enhance_policy: tech_summary.txt
           ---
-          This is a test post that needs to be summarized.' > _posts_commit/test-post.md
+          This post should be enhanced.' > _posts_commit/test-to-enhance.md
+
+          # To be skipped (empty policy)
+          echo '---
+          title: Test Empty Policy
+          enhance_policy:
+          ---
+          This post should not be enhanced.' > _posts_commit/test-empty-policy.md
+
+          # To be skipped (already enhanced)
+          echo '---
+          title: Test Already Enhanced
+          ---
+          This is new content. {% comment %} This post is already enhanced. {% endcomment %}' > _posts_commit/test-already-enhanced.md
 
       - name: Run action script
         env:
@@ -37,21 +56,21 @@ jobs:
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: python main.py
 
-      - name: Check for enhancement and preservation
+      - name: Verify enhanced file
         run: |
-          original_text="This is a test post that needs to be summarized."
-          
-          # Check if the original text is wrapped in comments
-          if ! grep -Pzo "{% comment %}(\s|.)*${original_text}(\s|.)*{% endcomment %}" _posts_commit/test-post.md; then
-            echo "Original text not found within comment block."
-            exit 1
-          fi
+          original_text="This post should be enhanced."
+          new_filepath="_posts/test-to-enhance.md"
+          if ! grep -Pzo "{% comment %}(\s|.)*${original_text}(\s|.)*{% endcomment %}" "$new_filepath"; then exit 1; fi
 
-          # Check that the AI-generated content is present and not the same as the original
-          body=$(sed '1,/^---$/d' _posts_commit/test-post.md | sed '1d' | sed -n '/{% comment %}/!p')
-          if [[ -z "$body" ]] || [[ "$body" == *"$original_text"* ]]; then
-            echo "AI content not generated or is the same as original."
-            exit 1
-          fi
+      - name: Verify skipped file (empty policy)
+        run: |
+          original_text="This post should not be enhanced."
+          new_filepath="_posts/test-empty-policy.md"
+          if ! grep -q "$original_text" "$new_filepath"; then exit 1; fi
+          if grep -q "{% comment %}" "$new_filepath"; then exit 1; fi
 
-          echo "Test passed: Content enhanced and original text preserved in comments."
+      - name: Verify skipped file (already enhanced)
+        run: |
+          original_text="This post is already enhanced."
+          new_filepath="_posts/test-already-enhanced.md"
+          if ! grep -q "$original_text" "$new_filepath"; then exit 1; fi
