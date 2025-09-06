@@ -96,7 +96,9 @@ for filename in os.listdir(posts_dir):
         enhance_instruction = policy_name
         print(f"Using enhance policy from front matter.")
 
-    final_instruction = instruction_boilerplate + "\n\n------ \n\n Additional Instruction \n\n" + enhance_instruction
+    final_instruction = instruction_boilerplate
+    final_instruction += "\n\n------ \n\n Additional Instruction \n\n" 
+    final_instruction += enhance_instruction
     content = post.content
 
     try:
