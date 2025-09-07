@@ -1,5 +1,11 @@
 # AI Enhanced Blog Post GitHub Action
 
+[![Test](https://github.com/techtana/ghaction_ai_enhanced_blogpost/actions/workflows/test.yml/badge.svg)](https://github.com/techtana/ghaction_ai_enhanced_blogpost/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/techtana/ghaction_ai_enhanced_blogpost)
+![GitHub last commit](https://img.shields.io/github/last-commit/techtana/ghaction_ai_enhanced_blogpost)
+![GitHub top language](https://img.shields.io/github/languages/top/techtana/ghaction_ai_enhanced_blogpost)
+
 This GitHub Action automates the enhancement of Jekyll blog posts using OpenAI's API. It processes markdown files from a `_posts_commit` directory, enhances them based on a flexible policy system, and moves them to the `_posts` directory, ready for publishing.
 
 ## Features
